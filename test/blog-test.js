@@ -70,7 +70,9 @@
 // 				lastName: faker.name.lastName()
 // 			},
 // 			content: faker.lorem.text()
-// 		}).then(function(res){it('should return all existing blog posts with GET', function(){
+// 		});
+
+// 	it('should return all existing blog posts with GET', function(){
 // 		return chai.request(app)
 // 		.get('/blog-posts')
 // 		.then(function(_res){
@@ -83,10 +85,6 @@
 // 			expect(res.body.BlogPost).to.have.length.of(count);
 // 		});
 // 	});
-
-// 	});
-
-	
 // });
 
 
