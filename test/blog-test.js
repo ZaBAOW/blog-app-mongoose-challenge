@@ -61,6 +61,16 @@ describe('blog posts API resource', function() {
 
 describe('GET', function() {
 	let res;
+	BlogPost.create(
+		{
+			title: faker.lorem.sentence(),
+			author: {
+				firstName: faker.name.firstName(),
+				lastName: faker.name.lastName()
+			},
+			content: faker.lorem.text()
+		});
+
 	it('should return all existing blog posts with GET', function(){
 		return chai.request(app)
 		.get('/blog-posts')
