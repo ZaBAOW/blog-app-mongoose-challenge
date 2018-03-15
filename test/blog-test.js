@@ -6,6 +6,7 @@ const chaiHTTP = require('chai-http')
 
 mongoose.Promise = global.Promise;
 
+const {app, runserver, closeServer} = require('../server');
 const {PORT, DATABASE_URL} = require('../config');
 const {BlogPost} = require('../models');
 const {TEST_DATABASE_URL} = require('../config');
@@ -65,7 +66,7 @@ describe('should return all existing blog posts with GET', function() {
 	.then(function(_res){
 		res = _res;
 		expect(res).to.have.status(200);
-		expect(res.body.blog-posts).to.have.length.of.at.least(1);
+		expect(res.body.blogposts).to.have.length.of.at.least(1);
 		return BlogPost.count();
 	})
 	.then(function(count){
@@ -76,7 +77,16 @@ describe('should return all existing blog posts with GET', function() {
 
 describe('should post a new blog post to database with POST', function() {
 	let res;
-	const newBlogPost = generateBlogPostData();
+	return chai.request()
+
+	const newBlogPost = {
+		title: faker.lorem.sentence(),
+		author: {
+			firstName: faker.name.firstName(),
+			lastName: faker.name.lastName()
+		},
+		content: faker.lorem.text()
+	};
 
 	return chai.request(app)
 	.post('/blog-posts')
@@ -93,10 +103,10 @@ describe('should post a new blog post to database with POST', function() {
 		
 		return BlogPost.findById(res.body.id);
 	})
-	.then(function(blog-posts) {
-		expect(blog-posts.title).to.equal(newBlogPost.title);
-		expect(blog-posts.content).to.equal(newBlogPost.content);
-		expect(blog-posts.author).to.equal(newBlogPost.author);
+	.then(function(blogposts) {
+		expect(blogposts.title).to.equal(newBlogPost.title);
+		expect(blogposts.content).to.equal(newBlogPost.content);
+		expect(blogposts.author).to.equal(newBlogPost.author);
 	})
 })
 
@@ -110,7 +120,7 @@ describe('should update blog post with PUT', function() {
 
 	return BlogPost
 	.findOne()
-	.then(function(blog-posts) {
+	.then(function(blogposts) {
 		updateData.id = blog-posts.id;
 
 		return chai.request(app)
@@ -122,27 +132,27 @@ describe('should update blog post with PUT', function() {
 
 		return BlogPost.findById(updateData.id);
 	})
-	.then(function(blog-posts) {
-		expect(blog-posts.title).to.equal(updateData.name);
-		expect(blog-posts.content).to.equal(updateData.content);
-		expect(blog-posts.author).to.equal(updateData.author);
+	.then(function(blogposts) {
+		expect(blogposts.title).to.equal(updateData.name);
+		expect(blogposts.content).to.equal(updateData.content);
+		expect(blogposts.author).to.equal(updateData.author);
 	});
 });
 
 describe('should delete blog post with DELETE', function() {
-	let blog-posts;
+	let blogposts;
 
 	return  BlogPost
 	.findOne()
-	.then(function(_blog-posts) {
-		blog-posts = _blog-posts;
+	.then(function(_blogposts) {
+		blogposts = _blogposts;
 		return chai.request(app).delete(`/blog-posts/${blog-posts.id}`);
 	})
 	.then(function(res) {
 		expect(res).to.have.status(204);
 		return BlogPost.findById(blog-posts.id);
 	})
-	.then(function(_blog-posts){
+	.then(function(_blogposts){
 		expect(_blog-posts).to.be.null;
 	});
 });
