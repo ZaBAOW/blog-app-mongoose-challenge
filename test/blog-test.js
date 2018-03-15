@@ -59,100 +59,107 @@ describe('blog posts API resource', function() {
 	});
 });
 
-describe('should return all existing blog posts with GET', function() {
+describe('GET', function() {
 	let res;
-	return chai.request(app)
-	.get('/blog-posts')
-	.then(function(_res){
-		res = _res;
-		expect(res).to.have.status(200);
-		expect(res.body.blogposts).to.have.length.of.at.least(1);
-		return BlogPost.count();
-	})
-	.then(function(count){
-		exjpect(res.body.BlogPost).to.have.length.of(count);
+	it('should return all existing blog posts with GET', function(){
+		return chai.request(app)
+		.get('/blog-posts')
+		.then(function(_res){
+			res = _res;
+			expect(res).to.have.status(200);
+			expect(res.body.blogposts).to.have.length.of.at.least(1);
+			return BlogPost.count();
+		})
+		.then(function(count){
+			exjpect(res.body.BlogPost).to.have.length.of(count);
+		});
 	});
 });
 
 
-describe('should post a new blog post to database with POST', function() {
+describe('POST', function() {
 	let res;
-	return chai.request()
+	it('should post a new blog post to database with POST', function() {
+		return chai.request()
 
-	const newBlogPost = {
-		title: faker.lorem.sentence(),
-		author: {
-			firstName: faker.name.firstName(),
-			lastName: faker.name.lastName()
-		},
-		content: faker.lorem.text()
-	};
-
-	return chai.request(app)
-	.post('/blog-posts')
-	.send(newBlogPost)
-	.then(function(res) {
-		expect(res).to.have.status(201);
-		expect(res).to.be.json;
-		expect(res.body).to.be.a('object');
-		expect(res.body).to.include.keys(
-			'id', 'title', 'content', 'author', 'publishDate');
-		expect(res.body.title).to.equal(newBlogPost.title);
-		expect(res.body.content).to.equal(newBlogPost.content);
-		expect(res.body.author).to.equal(newBlogPost.author);
-		
-		return BlogPost.findById(res.body.id);
-	})
-	.then(function(blogposts) {
-		expect(blogposts.title).to.equal(newBlogPost.title);
-		expect(blogposts.content).to.equal(newBlogPost.content);
-		expect(blogposts.author).to.equal(newBlogPost.author);
-	})
-})
-
-describe('should update blog post with PUT', function() {
-	let res;
-	const updateData = {
-		title: 'best title yet',
-		content: 'best content yet',
-		author: 'best author yet'
-	}
-
-	return BlogPost
-	.findOne()
-	.then(function(blogposts) {
-		updateData.id = blog-posts.id;
+		const newBlogPost = {
+			title: faker.lorem.sentence(),
+			author: {
+				firstName: faker.name.firstName(),
+				lastName: faker.name.lastName()
+			},
+			content: faker.lorem.text()
+		};
 
 		return chai.request(app)
-		.put(`/blog-posts/${blog-posts.id}`)
-		.send(updateData);
-	})
-	.then(function(res) {
-		expect(res).to.have.status(204);
+		.post('/blog-posts')
+		.send(newBlogPost)
+		.then(function(res) {
+			expect(res).to.have.status(201);
+			expect(res).to.be.json;
+			expect(res.body).to.be.a('object');
+			expect(res.body).to.include.keys(
+				'id', 'title', 'content', 'author', 'publishDate');
+			expect(res.body.title).to.equal(newBlogPost.title);
+			expect(res.body.content).to.equal(newBlogPost.content);
+			expect(res.body.author).to.equal(newBlogPost.author);
+			
+			return BlogPost.findById(res.body.id);
+		})
+		.then(function(blogposts) {
+			expect(blogposts.title).to.equal(newBlogPost.title);
+			expect(blogposts.content).to.equal(newBlogPost.content);
+			expect(blogposts.author).to.equal(newBlogPost.author);
+		})
+	});
+})
 
-		return BlogPost.findById(updateData.id);
-	})
-	.then(function(blogposts) {
-		expect(blogposts.title).to.equal(updateData.name);
-		expect(blogposts.content).to.equal(updateData.content);
-		expect(blogposts.author).to.equal(updateData.author);
+describe('PUT', function() {
+	let res;
+	it('should update blog post with PUT', function() {
+		const updateData = {
+			title: 'best title yet',
+			content: 'best content yet',
+			author: 'best author yet'
+		}
+
+		return BlogPost
+		.findOne()
+		.then(function(blogposts) {
+			updateData.id = blog-posts.id;
+
+			return chai.request(app)
+			.put(`/blog-posts/${blog-posts.id}`)
+			.send(updateData);
+		})
+		.then(function(res) {
+			expect(res).to.have.status(204);
+
+			return BlogPost.findById(updateData.id);
+		})
+		.then(function(blogposts) {
+			expect(blogposts.title).to.equal(updateData.name);
+			expect(blogposts.content).to.equal(updateData.content);
+			expect(blogposts.author).to.equal(updateData.author);
+		});
 	});
 });
 
-describe('should delete blog post with DELETE', function() {
+describe('DELETE', function() {
 	let blogposts;
-
-	return  BlogPost
-	.findOne()
-	.then(function(_blogposts) {
-		blogposts = _blogposts;
-		return chai.request(app).delete(`/blog-posts/${blog-posts.id}`);
-	})
-	.then(function(res) {
-		expect(res).to.have.status(204);
-		return BlogPost.findById(blog-posts.id);
-	})
-	.then(function(_blogposts){
-		expect(_blog-posts).to.be.null;
+	it('s;hould delete blog post with DELETE', function() {
+		return  BlogPost
+		.findOne()
+		.then(function(_blogposts) {
+			blogposts = _blogposts;
+			return chai.request(app).delete(`/blog-posts/${blog-posts.id}`);
+		})
+		.then(function(res) {
+			expect(res).to.have.status(204);
+			return BlogPost.findById(blog-posts.id);
+		})
+		.then(function(_blogposts){
+			expect(_blog-posts).to.be.null;
+		});
 	});
 });
