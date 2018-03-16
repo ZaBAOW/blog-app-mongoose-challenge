@@ -59,9 +59,10 @@ describe('blog posts API resource', function() {
 		return closeServer();
 	});
 
-	let res;
+
 
 	it('should return all existing blog posts with GET', function(){
+		let res;
 		return chai.request(app)
 		.get('/blog-posts')
 		.then(function(_res){
@@ -69,11 +70,11 @@ describe('blog posts API resource', function() {
 			expect(res).to.have.status(200);
 			expect(res.body).to.be.a('array');
 			expect(res.body).to.have.length.of.at.least(1);
-			// return BlogPost.count();
+			return BlogPost.count();
 		})
-		// .then(function(count){
-		// 	expect(res.body.BlogPost).to.have.length.of(count);
-		// });
+		.then(function(count){
+			expect(res.body).to.have.lengthOf(count);
+		});
 	});
 });
 
