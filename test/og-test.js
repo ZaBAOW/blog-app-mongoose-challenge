@@ -52,25 +52,25 @@ describe('Blogpost List', function(){
 		});
 	});
 
-	// it('Should add a Blogpost on POST', function(){
-	// 	const newBlogPost = {
-	// 		'title': 'new title', 
-	// 		'content': 'new content', 
-	// 		'author': 'new Zabel', 
-	// 		'publishDate': Date.now()
+	it('Should add a Blogpost on POST', function(){
+		const newBlogPost = {
+			'title': 'new title', 
+			'content': 'new content', 
+			'author': 'new Zabel', 
+			'publishDate': Date.now()
 			
-	// 	}
-	// 	return chai.request(app).post('/blog-posts').send(newBlogPost).then(function(res){
-	// 		expect(res).to.have.status(201);
-	// 		expect(res).to.be.json;
-	// 		expect(res.body).to.be.a('object');
-	// 		//console.log("RES BODY = ", res.body);
-	// 		expect(res.body).to.include.keys('title', 'content', 'author', 'publishDate');
-	// 		expect(res.body.id).to.not.equal(null);
+		}
+		return chai.request(app).post('/blog-posts').send(newBlogPost).then(function(res){
+			expect(res).to.have.status(201);
+			expect(res).to.be.json;
+			expect(res.body).to.be.a('object');
+			//console.log("RES BODY = ", res.body);
+			expect(res.body).to.include.keys('title', 'content', 'author', 'publishDate');
+			expect(res.body.id).to.not.equal(null);
 
-	// 		//expect(res.body).to.deep.equal(Object.assign(newBlogPosts, {id: res.body.id}));
-	// 	});
-	// });
+			//expect(res.body).to.deep.equal(Object.assign(newBlogPosts, {id: res.body.id}));
+		});
+	});
 
 	it('Should update Blogposts on PUT', function(){
 	
