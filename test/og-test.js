@@ -40,7 +40,7 @@ describe('Blogpost List', function(){
 				expect(res).to.have.status(200);
 				expect(res).to.be.json;
 				//console.log("RES BODY = ", res.body);
-				expect(res.body).to.be.a('object');
+				expect(res.body).to.be.a('array');
 				//expect(res.body.length).to.be.at.least(1);
 	
 				// const expectKeys = ['id', 'title', 'content', 'author', 'publishDate'];
@@ -65,7 +65,7 @@ describe('Blogpost List', function(){
 			expect(res).to.be.json;
 			expect(res.body).to.be.a('object');
 			//console.log("RES BODY = ", res.body);
-			expect(res.body).to.include.keys('title', 'content', 'author', 'publishDate');
+			expect(res.body).to.include.keys('id', 'title', 'content', 'author', 'created');
 			expect(res.body.id).to.not.equal(null);
 
 			//expect(res.body).to.deep.equal(Object.assign(newBlogPosts, {id: res.body.id}));
