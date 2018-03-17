@@ -76,89 +76,89 @@ describe('blog posts API resource', function() {
 			expect(res.body).to.have.lengthOf(count);
 		});
 	});
+
+	it('should post a new blog post to database with POST', function() {
+		let res;
+		const newBlogPost = {
+			title: faker.lorem.sentence(),
+			author: {
+				firstName: faker.name.firstName(),
+				lastName: faker.name.lastName()
+			},
+			content: faker.lorem.text()
+		};
+
+		return chai.request(app)
+		.post('/blog-posts')
+		.send(newBlogPost)
+		.then(function(res) {
+			expect(res).to.have.status(201);
+			expect(res).to.be.json;
+			expect(res.body).to.be.a('object');
+			expect(res.body).to.include.keys(
+				'id', 'title', 'content', 'author', 'created');
+			expect(res.body.title).to.equal(newBlogPost.title);
+			expect(res.body.content).to.equal(newBlogPost.content);
+			console.log(res.body.author);
+			return BlogPost.findById(res.body.id);
+		})
+		.then(function(blogposts) {
+			expect(blogposts.title).to.equal(newBlogPost.title);
+			expect(blogposts.content).to.equal(newBlogPost.content);
+			expect(blogposts.author.firstName).to.equal(newBlogPost.author.firstName);
+			expect(blogposts.author.lastName).to.equal(newBlogPost.author.lastName);
+		})
+	});
+
+	
+	it('should update blog post with PUT', function() {
+		let res;
+		const updateData = {
+			title: faker.lorem.sentence(),
+			content: faker.lorem.text(),
+			author: {
+				firstName: faker.name.firstName(),
+				lastName: faker.name.lastName()
+			}
+		};
+
+		return BlogPost
+		.findOne()
+		.then(function(blogposts) {
+			updateData.id = blogposts.id;
+
+			return chai.request(app)
+			.put(`/blog-posts/${blogposts.id}`)
+			.send(updateData);
+		})
+		.then(function(res) {
+			expect(res).to.have.status(204);
+
+			return BlogPost.findById(updateData.id);
+		})
+		.then(function(blogposts) {
+			expect(blogposts.title).to.equal(updateData.title);
+			expect(blogposts.content).to.equal(updateData.content);
+			console.log(blogposts.author);
+			expect(blogposts.author.firstName).to.equal(updateData.author.firstName);
+			expect(blogposts.author.lastName).to.equal(updateData.author.lastName);
+		});
+	});
+
+	it('should delete blog post with DELETE', function() {
+		let res;
+		return  BlogPost
+		.findOne()
+		.then(function(_blogposts) {
+			blogposts = _blogposts;
+			return chai.request(app).delete(`/blog-posts/${blogposts.id}`);
+		})
+		.then(function(res) {
+			expect(res).to.have.status(204);
+		})
+		.then(function(_blogposts){
+			console.log(_blogposts);
+			expect(_blogposts).to.equal(undefined);
+		});
+	});
 });
-
-
-// describe('POST', function() {
-// 	let res;
-// 	it('should post a new blog post to database with POST', function() {
-
-// 		const newBlogPost = {
-// 			title: faker.lorem.sentence(),
-// 			author: {
-// 				firstName: faker.name.firstName(),
-// 				lastName: faker.name.lastName()
-// 			},
-// 			content: faker.lorem.text()
-// 		};
-
-// 		return chai.request(app)
-// 		.post('/blog-posts')
-// 		.send(newBlogPost)
-// 		.then(function(res) {
-// 			expect(res).to.have.status(201);
-// 			expect(res).to.be.json;
-// 			expect(res.body).to.be.a('object');
-// 			expect(res.body).to.include.keys(
-// 				'id', 'title', 'content', 'author', 'publishDate');
-// 			expect(res.body.title).to.equal(newBlogPost.title);
-// 			expect(res.body.content).to.equal(newBlogPost.content);
-// 			expect(res.body.author).to.equal(newBlogPost.author);
-			
-// 			return BlogPost.findById(res.body.id);
-// 		})
-// 		.then(function(blogposts) {
-// 			expect(blogposts.title).to.equal(newBlogPost.title);
-// 			expect(blogposts.content).to.equal(newBlogPost.content);
-// 			expect(blogposts.author).to.equal(newBlogPost.author);
-// 		})
-// 	});
-// });
-
-// describe('PUT', function() {
-// 	let res;
-// 	it('should update blog post with PUT', function() {
-// 		const updateData = {
-// 			title: 'best title yet',
-// 			content: 'best content yet',
-// 			author: 'best author yet'
-// 		}
-
-// 		return BlogPost
-// 		.findOne()
-// 		.then(function(blogposts) {
-// 			updateData.id = blog-posts.id;
-
-// 			return chai.request(app)
-// 			.put(`/blog-posts/${blog-posts.id}`)
-// 			.send(updateData);
-// 		})
-// 		.then(function(res) {
-// 			expect(res).to.have.status(204);
-
-// 			return BlogPost.findById(updateData.id);
-// 		})
-// 		.then(function(blogposts) {
-// 			expect(blogposts.title).to.equal(updateData.name);
-// 			expect(blogposts.content).to.equal(updateData.content);
-// 			expect(blogposts.author).to.equal(updateData.author);
-// 		});
-// 	});
-// });
-
-// describe('DELETE', function() {
-// 	it('should delete blog post with DELETE', function() {
-// 		return  BlogPost
-// 		.findOne()
-// 		.then(function(_blogposts) {
-// 			blogposts = _blogposts;
-// 			return chai.request(app).delete(`/blog-posts/${blogposts.id}`);
-// 		})
-// 		.then(function(res) {
-// 			expect(res).to.have.status(204);
-// 		})
-// 		.then(function(_blogposts){
-// 			expect(_blogposts).to.be.null;
-// 		});
-// 	});
-// });
