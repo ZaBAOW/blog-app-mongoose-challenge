@@ -147,6 +147,7 @@ describe('blog posts API resource', function() {
 
 	it('should delete blog post with DELETE', function() {
 		let res;
+		let post;
 		return  BlogPost
 		.findOne()
 		.then(function(_blogposts) {
@@ -155,10 +156,10 @@ describe('blog posts API resource', function() {
 		})
 		.then(function(res) {
 			expect(res).to.have.status(204);
+			return Blogpost.findById(blogpost.id);
 		})
-		.then(function(_blogposts){
-			console.log(_blogposts);
-			expect(_blogposts).to.equal(undefined);
+		.then(function(_blogpost){
+			expect(_blogpost).to.equal(undefined);
 		});
 	});
 });
