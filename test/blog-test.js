@@ -148,18 +148,18 @@ describe('blog posts API resource', function() {
 	it('should delete blog post with DELETE', function() {
 		let res;
 		let post;
-		return  BlogPost
+		return BlogPost
 		.findOne()
 		.then(function(_blogposts) {
-			blogposts = _blogposts;
-			return chai.request(app).delete(`/blog-posts/${blogposts.id}`);
+			post = _blogposts;
+			return chai.request(app).delete(`/blog-posts/${post.id}`);
 		})
 		.then(function(res) {
 			expect(res).to.have.status(204);
-			return Blogpost.findById(blogpost.id);
+			return BlogPost.findById(post.id);
 		})
 		.then(function(_blogpost){
-			expect(_blogpost).to.equal(undefined);
+			expect(_blogpost).to.be.null;
 		});
 	});
 });
